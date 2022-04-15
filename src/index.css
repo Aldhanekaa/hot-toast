@@ -1,0 +1,163 @@
+/* Configure Styling for Toast Parent */
+div#hot_toast {
+  position: fixed;
+  z-index: 9999;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  pointer-events: none;
+}
+
+.consistent {
+  display: flex;
+}
+
+.consistent {
+  display: flex;
+}
+
+.toast-order {
+  display: flex;
+  flex-direction: column;
+}
+
+.toast-order.reverse {
+  flex-direction: column-reverse;
+}
+
+.top-right {
+  flex-direction: column;
+  align-items: flex-end;
+}
+.top-center {
+  flex-direction: column;
+  align-items: center;
+}
+.top-left {
+  flex-direction: column;
+
+  align-items: flex-start;
+}
+
+.bottom-right {
+  flex-direction: column-reverse;
+  align-items: flex-end;
+}
+.bottom-center {
+  flex-direction: column-reverse;
+  align-items: center;
+}
+.bottom-left {
+  flex-direction: column-reverse;
+
+  align-items: flex-start;
+}
+/* end of Configure Styling for Toast Parent */
+
+/* Configure Styling for Toast */
+
+.toast {
+  pointer-events: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.toast-content {
+  display: flex;
+  position: relative;
+
+  padding: 8px 10px;
+  max-width: 350px;
+
+  top: 0;
+
+  background: #fff;
+  color: #363636;
+  border-radius: 8px;
+
+  box-shadow: 0 3px 10px rgb(0 0 0 / 10%), 0 3px 3px rgb(0 0 0 / 5%);
+}
+
+.toast-icon {
+  margin-right: 10px;
+}
+
+.showing {
+  animation: showing 300ms forwards;
+}
+
+.hiding {
+  animation: hiding 200ms forwards;
+}
+
+@keyframes showing {
+  from {
+    transform: scale(0.3);
+    top: -10px;
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    top: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes hiding {
+  from {
+    top: 0;
+  }
+
+  to {
+    transform: scale(0.3);
+    top: -10px;
+    opacity: 0;
+  }
+}
+
+/* Styling for toast condition */
+
+/* end of Styling for toast condition */
+
+.toast-placement {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#placement_top-left {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+#placement_top-center {
+  position: absolute;
+  top: 0px;
+
+  left: 50%;
+}
+#placement_top-right {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+#placement_bottom-left {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+}
+#placement_bottom-center {
+  position: absolute;
+  bottom: 0px;
+
+  left: 50%;
+}
+#placement_bottom-right {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
