@@ -46,6 +46,16 @@
     opacity: 1;
   }
 }
+@keyframes warningSign {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
 @keyframes go651618207 {
   0% {
     height: 0;
@@ -130,6 +140,25 @@
 .go1579819456 {
   position: absolute;
 }
+.warning-sign {
+  opacity: 0;
+  position: relative;
+  fill: #edd83d;
+  stroke: #edd83d;
+  stroke-width: 50px;
+
+  animation: warningSign 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation-delay: 100ms;
+}
+.exclamation {
+  opacity: 0;
+
+  fill: #fff;
+  stroke: #fff;
+  transform: scale(1.5) translate(15px, 20px);
+  animation: go651618207 0.2s ease-out forwards;
+}
+
 .go2344853693 {
   width: 20px;
   opacity: 0;

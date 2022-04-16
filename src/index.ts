@@ -35,14 +35,14 @@ interface toastConfiguration {
   style?: ToastConfigStyle;
   iconTheme?: IconThemeStyle;
 }
-const defaultDuration = 2000;
+const defaultDuration = 20000;
 const toastDefaultConfig: toastConfiguration = {
   duration: defaultDuration,
 };
 
 type placementData = 'consistent' | 'stacks';
 const placementDatas = ['consistent', 'stacks'];
-const defaultToastPlacement: toastPlacement = 'bottom-left';
+const defaultToastPlacement: toastPlacement = 'top-center';
 
 var toastOrder: JQuery<HTMLElement> | undefined;
 
@@ -100,7 +100,7 @@ var toastOrder: JQuery<HTMLElement> | undefined;
       message: string,
       config: toastConfiguration = toastDefaultConfig
     ) {
-      toastTrigger(
+      var contentParent = toastTrigger(
         toastParent,
         toastPlacement,
         placementData,
@@ -108,6 +108,8 @@ var toastOrder: JQuery<HTMLElement> | undefined;
         message,
         config
       );
+
+      timeOutToast(contentParent, config.duration);
     };
     // @ts-ignore
     f.__proto__ = Toast.prototype;
@@ -150,6 +152,21 @@ var toastOrder: JQuery<HTMLElement> | undefined;
 
     timeOutToast(contentParent, config.duration);
   };
+  Toast.prototype.warning = function (
+    message: string,
+    config: toastConfiguration = toastDefaultConfig
+  ) {
+    let contentParent = toastTrigger(
+      toastParent,
+      toastPlacement,
+      placementData,
+      'warning',
+      message,
+      config
+    );
+
+    timeOutToast(contentParent, config.duration);
+  };
   Toast.prototype.error = function (
     message: string,
     config: toastConfiguration = toastDefaultConfig
@@ -166,18 +183,19 @@ var toastOrder: JQuery<HTMLElement> | undefined;
     timeOutToast(contentParent, config.duration);
   };
   Toast.prototype.promise = function (
-    message: string,
+    promise: Promise<any>,
     PromiseMessage: { loading: string; success: string; error: string },
     config: toastConfiguration = toastDefaultConfig
   ) {
-    toastTrigger(
-      toastParent,
-      toastPlacement,
-      placementData,
-      'error',
-      message,
-      config
-    );
+    // promise.then()
+    // toastTrigger(
+    //   toastParent,
+    //   toastPlacement,
+    //   placementData,
+    //   'error',
+    //   message,
+    //   config
+    // );
   };
 
   checksPlacementData(toastParent, placementData, toastPlacement);
@@ -198,7 +216,13 @@ function checksPlacementData(
   return;
 }
 
-type toastStatus = 'success' | 'error' | 'info' | 'custom';
+type toastStatus =
+  | 'success'
+  | 'error'
+  | 'info'
+  | 'custom'
+  | 'loading'
+  | 'warning';
 
 function toastTrigger(
   toastParent: JQuery<HTMLElement>,
@@ -219,8 +243,16 @@ function toastTrigger(
 
   const successIcon = `<div id="" class="go2344853693 icon-hot-toast"></div>`;
   const errorIcon = `<div class="go2534082608 icon-hot-toast"></div>`;
-  const loading = (mainIcon?: string) =>
-    `<div class="go685806154"><div class="go1858758034"></div><div class="go1579819456">${mainIcon}</div></div>`;
+  const warningIcon = `<svg class="icon-hot-toast"  width="25px" height="25px" viewBox="-50 -50 300 300">
+  <polygon class="triangle warning-sign" stroke-linejoin="round" points="100,0 0,200 200,200"/>
+  <path class="exclamation" xmlns="http://www.w3.org/2000/svg" d="M49.9,78c-4.2,0-7.6,3.5-7.6,7.8v1.5c0,4.3,3.4,7.7,7.6,7.7c4.2,0,7.7-3.4,7.7-7.7v-1.5C57.6,81.5,54.2,78,49.9,78L49.9,78z   M49.8,5c-6.3,0-11.9,6.1-11.3,12.4l3.8,47c0.2,3.7,3.1,6.9,6.9,7.2c4.3,0.3,8.1-3,8.4-7.2l3.9-47C62,11.1,56.6,5,49.8,5z"/>
+</svg>
+ `;
+
+  const loading = `<div class="go1858758034"></div>`;
+
+  const generateIconParent = (mainIcon?: string) =>
+    `<div class="go685806154"><div class="go1579819456">${mainIcon}</div></div>`;
 
   var statusClass;
   var icon;
@@ -241,8 +273,19 @@ function toastTrigger(
       statusClass = 'info-toast';
       icon = '';
       break;
+
+    case 'loading':
+      statusClass = 'loading-toast';
+      icon = loading;
+      break;
+
+    case 'warning':
+      statusClass = 'warning-toast';
+      icon = warningIcon;
+      break;
+
     default:
-      icon = '';
+      icon = loading;
       statusClass = '';
       break;
   }
@@ -257,7 +300,6 @@ function toastTrigger(
 
   if (icon) {
     if (config.icon) {
-      console.log(icon);
       iconElement = $(`<span>${icon}</span>`);
       IconCustomStyle(iconElement, config.iconTheme);
       var a = iconElement.html();
@@ -265,23 +307,31 @@ function toastTrigger(
       iconElement = a;
     } else {
       iconElement = $(icon);
-      IconCustomStyle(iconElement, config.iconTheme);
+      IconCustomStyle(
+        iconElement,
+        config.iconTheme,
+        toastStatus == 'warning' ? true : false
+      );
 
       var a = $('<div></div>').append(iconElement).html();
-      iconElement = loading(a);
+      iconElement = generateIconParent(a);
     }
   }
 
-  const contentStr = (icon: string) => `
-    <div class="toast-content "> ${
-      icon && `<div class="toast-icon">${icon}</div>`
-    } <span class="toast-message">${message}</span></div>
+  const contentStr = `
+    <div class="toast-content "> 
+    </div>
     `;
 
   const contentParent = $(`<div class="toast showing"> </div>`);
-  let content = $(contentStr(icon && iconElement));
+  let content = $(contentStr);
 
   customStyle(content, config.style);
+  if (icon) {
+    content.append($(`<div class="toast-icon">${iconElement}</div>`));
+  }
+
+  content.append($(` <span class="toast-message">${message}</span>`));
 
   contentParent.append(content);
 
@@ -302,11 +352,19 @@ function customStyle(content: JQuery<HTMLElement>, style: ToastConfigStyle) {
 }
 function IconCustomStyle(
   iconElement: JQuery<HTMLElement>,
-  iconThemeStyle: IconThemeStyle
+  iconThemeStyle: IconThemeStyle,
+  warning?: boolean
 ) {
+  if (warning) {
+    iconElement.children('.warning-sign').css('fill', iconThemeStyle.primary);
+    iconElement.children('.warning-sign').css('stroke', iconThemeStyle.primary);
+    return;
+  }
   if (iconElement && iconThemeStyle) {
+    console.log(iconThemeStyle, iconElement);
     iconElement.css('background', iconThemeStyle.primary);
     iconElement.css('color', iconThemeStyle.secondary);
+    console.log(iconElement.css('background'));
   }
 }
 
