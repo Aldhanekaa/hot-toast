@@ -35,7 +35,7 @@ interface toastConfiguration {
   style?: ToastConfigStyle;
   iconTheme?: IconThemeStyle;
 }
-const defaultDuration = 20000;
+const defaultDuration = 2000;
 const toastDefaultConfig: toastConfiguration = {
   duration: defaultDuration,
 };
@@ -152,6 +152,21 @@ var toastOrder: JQuery<HTMLElement> | undefined;
 
     timeOutToast(contentParent, config.duration);
   };
+  Toast.prototype.info = function (
+    message: string,
+    config: toastConfiguration = toastDefaultConfig
+  ) {
+    let contentParent = toastTrigger(
+      toastParent,
+      toastPlacement,
+      placementData,
+      'info',
+      message,
+      config
+    );
+
+    timeOutToast(contentParent, config.duration);
+  };
   Toast.prototype.warning = function (
     message: string,
     config: toastConfiguration = toastDefaultConfig
@@ -198,7 +213,7 @@ var toastOrder: JQuery<HTMLElement> | undefined;
     // );
   };
 
-  checksPlacementData(toastParent, placementData, toastPlacement);
+  checksPlacementData(toastOrder, placementData, toastPlacement);
   $('body').append(toastParent);
 
   window.toast = new (Toast as any)();
@@ -242,6 +257,7 @@ function toastTrigger(
   // <div class="go2534082608 icon-hot-toast"></div> error
 
   const successIcon = `<div id="" class="go2344853693 icon-hot-toast"></div>`;
+  const infoIcon = `<div id="" class="infoIcon icon-hot-toast"></div>`;
   const errorIcon = `<div class="go2534082608 icon-hot-toast"></div>`;
   const warningIcon = `<svg class="icon-hot-toast"  width="25px" height="25px" viewBox="-50 -50 300 300">
   <polygon class="triangle warning-sign" stroke-linejoin="round" points="100,0 0,200 200,200"/>
@@ -271,7 +287,7 @@ function toastTrigger(
 
     case 'info':
       statusClass = 'info-toast';
-      icon = '';
+      icon = infoIcon;
       break;
 
     case 'loading':
@@ -355,16 +371,19 @@ function IconCustomStyle(
   iconThemeStyle: IconThemeStyle,
   warning?: boolean
 ) {
-  if (warning) {
-    iconElement.children('.warning-sign').css('fill', iconThemeStyle.primary);
-    iconElement.children('.warning-sign').css('stroke', iconThemeStyle.primary);
-    return;
-  }
   if (iconElement && iconThemeStyle) {
-    console.log(iconThemeStyle, iconElement);
+    if (warning) {
+      iconElement.children('.warning-sign').css('fill', iconThemeStyle.primary);
+      iconElement
+        .children('.warning-sign')
+        .css('stroke', iconThemeStyle.primary);
+      return;
+    }
+
+    // console.log(iconThemeStyle, iconElement);
     iconElement.css('background', iconThemeStyle.primary);
     iconElement.css('color', iconThemeStyle.secondary);
-    console.log(iconElement.css('background'));
+    // console.log(iconElement.css('background'));
   }
 }
 

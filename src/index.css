@@ -58,6 +58,7 @@ div#hot_toast {
 /* Configure Styling for Toast */
 
 .toast {
+  width: auto;
   pointer-events: auto;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -123,7 +124,6 @@ div#hot_toast {
 /* end of Styling for toast condition */
 
 .toast-placement {
-  width: auto;
   display: flex;
   flex-direction: column;
 }
