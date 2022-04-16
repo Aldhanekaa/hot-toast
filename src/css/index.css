@@ -65,9 +65,10 @@ div#hot_toast {
   position: relative;
 }
 
-.toast-content {
+.toast-content-parent {
   display: flex;
   position: relative;
+  justify-content: space-between;
 
   padding: 8px 10px;
   max-width: 350px;
@@ -83,6 +84,33 @@ div#hot_toast {
 
 .toast-icon {
   margin-right: 10px;
+}
+
+.toast-cotent {
+  width: 100%;
+  display: flex;
+}
+
+.toast-message {
+  word-break: break-all;
+}
+
+.hot-toast-close {
+  width: 10px;
+  height: 10px;
+
+  min-width: 3%;
+
+  margin-left: 15px;
+  position: relative;
+
+  cursor: pointer;
+
+  transition: 300ms;
+}
+
+.hot-toast-close:active {
+  transform: translateY(2px);
 }
 
 .showing {
