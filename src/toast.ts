@@ -230,9 +230,14 @@ class ToastTrigger {
     // <div class="go2534082608 icon-hot-toast"></div> error
 
     const successIcon = `<div id="" class="go2344853693 icon-hot-toast"></div>`;
-    const infoIcon = `<div id="" class="infoIcon icon-hot-toast"></div>`;
+    const infoIcon = `<div id="" class="infoIcon icon-hot-toast">
+     <svg class="icon-hot-toast"  width="25px" height="25px" viewBox="-50 -50 300 300">
+    <path class="exclamation" xmlns="http://www.w3.org/2000/svg" d="M49.9,78c-4.2,0-7.6,3.5-7.6,7.8v1.5c0,4.3,3.4,7.7,7.6,7.7c4.2,0,7.7-3.4,7.7-7.7v-1.5C57.6,81.5,54.2,78,49.9,78L49.9,78z   M49.8,5c-6.3,0-11.9,6.1-11.3,12.4l3.8,47c0.2,3.7,3.1,6.9,6.9,7.2c4.3,0.3,8.1-3,8.4-7.2l3.9-47C62,11.1,56.6,5,49.8,5z"/>
+
+    </svg>
+    </div>`;
     const errorIcon = `<div class="go2534082608 icon-hot-toast"></div>`;
-    const warningIcon = `<svg class="icon-hot-toast"  width="25px" height="25px" viewBox="-50 -50 300 300">
+    const warningIcon = `<svg class="icon-hot-toast warning-icon"  width="25px" height="25px" viewBox="-50 -50 300 300">
   <polygon class="triangle warning-sign hot-toast-path-sign" stroke-linejoin="round" points="100,0 0,200 200,200"/>
   <path class="exclamation" xmlns="http://www.w3.org/2000/svg" d="M49.9,78c-4.2,0-7.6,3.5-7.6,7.8v1.5c0,4.3,3.4,7.7,7.6,7.7c4.2,0,7.7-3.4,7.7-7.7v-1.5C57.6,81.5,54.2,78,49.9,78L49.9,78z   M49.8,5c-6.3,0-11.9,6.1-11.3,12.4l3.8,47c0.2,3.7,3.1,6.9,6.9,7.2c4.3,0.3,8.1-3,8.4-7.2l3.9-47C62,11.1,56.6,5,49.8,5z"/>
 </svg>

@@ -155,8 +155,10 @@
 
   fill: #fff;
   stroke: #fff;
-  transform: scale(1.5) translate(15px, 20px);
   animation: go651618207 0.2s ease-out forwards;
+}
+.warning-icon .exclamation {
+  transform: scale(1.5) translate(17px, 20px);
 }
 
 .infoIcon {
@@ -169,19 +171,8 @@
   animation: warningSign 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   animation-delay: 100ms;
 }
-.infoIcon:after {
-  content: '!';
-  box-sizing: border-box;
-  animation: go651618207 0.2s ease-out forwards;
-  opacity: 0;
-  animation-delay: 200ms;
-  position: absolute;
-  font-size: 15px;
-  color: white !important;
-  left: 35%;
-  top: 1px;
-
-  font-weight: 600;
+.infoIcon .exclamation {
+  transform: scale(1.5) translate(-3px, -1px);
 }
 
 .go2344853693 {
