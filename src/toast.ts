@@ -10,6 +10,12 @@ import $ from 'jquery';
 
 import { defaultDuration, toastDefaultConfig } from './config';
 
+interface toastMessageEvent {
+  showing: boolean;
+  id: string;
+}
+type toastMessage = (event: toastMessageEvent) => string | string;
+
 export function Toast(
   toastOrder: JQuery<HTMLElement>,
   toastPlacement: toastPlacement,
@@ -20,7 +26,7 @@ export function Toast(
   }
 
   var f = function (
-    message: string,
+    message: toastMessage,
     config: toastConfiguration = toastDefaultConfig
   ) {
     var contentParent = new ToastTrigger(
@@ -32,7 +38,7 @@ export function Toast(
       config
     );
 
-    timeOutToast(contentParent.toastElement, config.duration);
+    timeOutToast(contentParent.toastElement, config.duration, contentParent);
   };
 
   //   console.log(Object.kaZSXDFGC eys(Toast.prototype));
@@ -50,6 +56,22 @@ export function Toast(
 
   return f;
 }
+
+Toast.prototype.close = function (
+  toastOrder: JQuery<HTMLElement>,
+  toastPlacement: toastPlacement,
+  placementData: placementData
+) {
+  return function (id: string) {
+    $(`#toast_${id}`).removeClass('showing');
+    $(`#toast_${id}`).addClass('hiding');
+
+    setTimeout(() => {
+      $(`#toast_${id}`).remove();
+    }, 220);
+  };
+};
+
 Toast.prototype.reverse = function (
   toastOrder: JQuery<HTMLElement>,
   toastPlacement: toastPlacement,
@@ -83,7 +105,7 @@ Toast.prototype.success = function (
   toastOrder: JQuery<HTMLElement>
 ) {
   return function (
-    message: string,
+    message: toastMessage,
     config: toastConfiguration = toastDefaultConfig
   ) {
     let contentParent = new ToastTrigger(
@@ -107,7 +129,7 @@ Toast.prototype.info = function (
   toastOrder: JQuery<HTMLElement>
 ) {
   return function (
-    message: string,
+    message: toastMessage,
     config: toastConfiguration = toastDefaultConfig
   ) {
     let contentParent = new ToastTrigger(
@@ -132,7 +154,7 @@ Toast.prototype.warning = function (
   toastOrder: JQuery<HTMLElement>
 ) {
   return function (
-    message: string,
+    message: toastMessage,
     config: toastConfiguration = toastDefaultConfig
   ) {
     let contentParent = new ToastTrigger(
@@ -156,7 +178,7 @@ Toast.prototype.error = function (
   toastOrder: JQuery<HTMLElement>
 ) {
   return function (
-    message: string,
+    message: toastMessage,
     config: toastConfiguration = toastDefaultConfig
   ) {
     let contentParent = new ToastTrigger(
@@ -211,13 +233,15 @@ export function checksPlacementData(
 
 class ToastTrigger {
   toastElement: JQuery<HTMLElement>;
+  message: toastMessage;
+  id: number;
 
   constructor(
     toastOrder: JQuery<HTMLElement>,
     toastPlacement: toastPlacement,
     placementData: placementData,
     toastStatus: toastStatus,
-    message: string,
+    message: toastMessage,
     config: toastConfiguration = toastDefaultConfig
   ) {
     if (!message) {
@@ -226,8 +250,8 @@ class ToastTrigger {
       );
       return;
     }
-    // <div id="" class="go2344853693 icon-hot-toast"></div> success
-    // <div class="go2534082608 icon-hot-toast"></div> error
+
+    this.message = message;
 
     const successIcon = `<div id="" class="go2344853693 icon-hot-toast"></div>`;
     const infoIcon = `<div id="" class="infoIcon icon-hot-toast">
@@ -312,50 +336,71 @@ class ToastTrigger {
       }
     }
 
-    const xSign = $(
-      `<div class="hot-toast-close">
+    let xSign;
+    let toastElement;
+    let contentParent;
+
+    if (typeof message == 'string') {
+      xSign = $(
+        `<div class="hot-toast-close">
     <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
         <path fill="currentColor" d="M.439,21.44a1.5,1.5,0,0,0,2.122,2.121L11.823,14.3a.25.25,0,0,1,.354,0l9.262,9.263a1.5,1.5,0,1,0,2.122-2.121L14.3,12.177a.25.25,0,0,1,0-.354l9.263-9.262A1.5,1.5,0,0,0,21.439.44L12.177,9.7a.25.25,0,0,1-.354,0L2.561.44A1.5,1.5,0,0,0,.439,2.561L9.7,11.823a.25.25,0,0,1,0,.354Z">
         </path>
     </svg>
     </div>`
-    );
-    IconCustomStyle(xSign, config.iconTheme, true);
+      );
+      IconCustomStyle(xSign, config.iconTheme, true);
 
-    const contentParentStr = `
+      const contentParentStr = `
     <div class="toast-content-parent "> 
     </div>
     `;
 
-    const toastElement = $(`<div class="toast showing"> </div>`);
-    let contentParent = $(contentParentStr);
-    let content = $('<div class="toast-cotent"></div>');
+      toastElement = $(`<div class="toast showing"> </div>`);
+      contentParent = $(contentParentStr);
+      let content = $('<div class="toast-cotent"></div>');
 
-    customStyle(contentParent, config.style);
-    if (icon) {
-      content.append($(`<div class="toast-icon">${iconElement}</div>`));
+      customStyle(contentParent, config.style);
+      if (icon) {
+        content.append($(`<div class="toast-icon">${iconElement}</div>`));
+      }
+
+      content.append($(` <span class="toast-message">${message}</span>`));
+      contentParent.append(content);
+
+      if (config.dismissible) {
+        contentParent.append(xSign);
+
+        xSign.on('click', () => {
+          this.close();
+        });
+      }
+
+      toastElement.append(contentParent);
+    } else {
+      if (placementData == 'stacks') {
+        this.id =
+          $(`#toast-order_placement_${toastPlacement}`).find('div').length + 1;
+      } else {
+        this.id = toastOrder.find('div').length + 1;
+      }
+
+      toastElement = $(
+        message({
+          showing: true,
+          id: String(this.id),
+        })
+      );
+      toastElement.attr('id', `toast_${this.id}`);
     }
 
-    content.append($(` <span class="toast-message">${message}</span>`));
-    contentParent.append(content);
-
-    if (config.dismissible) {
-      contentParent.append(xSign);
-
-      xSign.on('click', () => {
-        this.close();
-      });
-    }
-
-    toastElement.append(contentParent);
+    this.toastElement = toastElement;
 
     if (placementData == 'stacks') {
       $(`#toast-order_placement_${toastPlacement}`).append(contentParent);
     } else {
       toastOrder.append(toastElement);
     }
-
-    this.toastElement = toastElement;
   }
 
   close() {
@@ -401,9 +446,24 @@ export function IconCustomStyle(
 }
 export function timeOutToast(
   contentParent: JQuery<HTMLElement>,
-  duration: number
+  duration: number,
+  toast?: ToastTrigger
 ) {
   setTimeout(() => {
+    if (toast && typeof toast.message != 'string') {
+      toast.toastElement.html(
+        toast.message({
+          showing: false,
+          id: String(toast.id),
+        })
+      );
+
+      setTimeout(() => {
+        $(`#toast_${toast.id}`).remove();
+      }, 220);
+      return;
+    }
+
     contentParent.removeClass('showing');
     contentParent.addClass('hiding');
 

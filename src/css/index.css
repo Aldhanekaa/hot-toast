@@ -22,6 +22,10 @@ div#hot_toast {
   flex-direction: column;
 }
 
+.toast-order > div {
+  pointer-events: auto;
+}
+
 .toast-order.reverse {
   flex-direction: column-reverse;
 }
@@ -59,7 +63,6 @@ div#hot_toast {
 
 .toast {
   width: auto;
-  pointer-events: auto;
   border-radius: 8px;
   margin-bottom: 10px;
   position: relative;
