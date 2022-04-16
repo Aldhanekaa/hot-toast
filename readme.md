@@ -2,7 +2,9 @@
 
 <p style="text-align: center;">Full Customisable Toast for Native HTML</p>
 
-<center>[Website](https://aldhanekaa.github.io/hot-toast)</center>
+<p align="center">
+   [Website](https://aldhanekaa.github.io/hot-toast)
+</p>
 
 ---
 
