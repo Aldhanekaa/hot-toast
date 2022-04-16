@@ -25,6 +25,6 @@ export interface toastConfiguration {
   icon?: string; // innerHtml and only works on toast() function
   style?: ToastConfigStyle;
   iconTheme?: IconThemeStyle;
-  dismissible: boolean;
+  dismissible?: boolean;
 }
 export type placementData = 'consistent' | 'stacks';

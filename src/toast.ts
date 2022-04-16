@@ -23,7 +23,7 @@ export function Toast(
     message: string,
     config: toastConfiguration = toastDefaultConfig
   ) {
-    var contentParent = toastTrigger(
+    var contentParent = new ToastTrigger(
       toastOrder,
       toastPlacement,
       placementData,
@@ -32,7 +32,7 @@ export function Toast(
       config
     );
 
-    timeOutToast(contentParent, config.duration);
+    timeOutToast(contentParent.toastElement, config.duration);
   };
 
   //   console.log(Object.kaZSXDFGC eys(Toast.prototype));
@@ -86,7 +86,7 @@ Toast.prototype.success = function (
     message: string,
     config: toastConfiguration = toastDefaultConfig
   ) {
-    let contentParent = toastTrigger(
+    let contentParent = new ToastTrigger(
       toastParent,
       toastPlacement,
       placementData,
@@ -95,7 +95,7 @@ Toast.prototype.success = function (
       config
     );
 
-    timeOutToast(contentParent, config.duration);
+    timeOutToast(contentParent.toastElement, config.duration);
 
     return contentParent;
   };
@@ -110,7 +110,7 @@ Toast.prototype.info = function (
     message: string,
     config: toastConfiguration = toastDefaultConfig
   ) {
-    let contentParent = toastTrigger(
+    let contentParent = new ToastTrigger(
       toastParent,
       toastPlacement,
       placementData,
@@ -119,7 +119,7 @@ Toast.prototype.info = function (
       config
     );
 
-    timeOutToast(contentParent, config.duration);
+    timeOutToast(contentParent.toastElement, config.duration);
 
     return contentParent;
   };
@@ -135,7 +135,7 @@ Toast.prototype.warning = function (
     message: string,
     config: toastConfiguration = toastDefaultConfig
   ) {
-    let contentParent = toastTrigger(
+    let contentParent = new ToastTrigger(
       toastParent,
       toastPlacement,
       placementData,
@@ -144,7 +144,7 @@ Toast.prototype.warning = function (
       config
     );
 
-    timeOutToast(contentParent, config.duration);
+    timeOutToast(contentParent.toastElement, config.duration);
 
     return contentParent;
   };
@@ -159,7 +159,7 @@ Toast.prototype.error = function (
     message: string,
     config: toastConfiguration = toastDefaultConfig
   ) {
-    let contentParent = toastTrigger(
+    let contentParent = new ToastTrigger(
       toastParent,
       toastPlacement,
       placementData,
@@ -168,7 +168,7 @@ Toast.prototype.error = function (
       config
     );
 
-    timeOutToast(contentParent, config.duration);
+    timeOutToast(contentParent.toastElement, config.duration);
 
     return contentParent;
   };
@@ -208,139 +208,161 @@ export function checksPlacementData(
   }
   return;
 }
-export function toastTrigger(
-  toastOrder: JQuery<HTMLElement>,
-  toastPlacement: toastPlacement,
-  placementData: placementData,
-  toastStatus: toastStatus,
-  message: string,
-  config: toastConfiguration = toastDefaultConfig
-) {
-  if (!message) {
-    console.error(
-      "Expected 1 arguments, but got 0. An argument for 'message' was not provided."
-    );
-    return;
-  }
-  // <div id="" class="go2344853693 icon-hot-toast"></div> success
-  // <div class="go2534082608 icon-hot-toast"></div> error
 
-  const successIcon = `<div id="" class="go2344853693 icon-hot-toast"></div>`;
-  const infoIcon = `<div id="" class="infoIcon icon-hot-toast"></div>`;
-  const errorIcon = `<div class="go2534082608 icon-hot-toast"></div>`;
-  const warningIcon = `<svg class="icon-hot-toast"  width="25px" height="25px" viewBox="-50 -50 300 300">
+class ToastTrigger {
+  toastElement: JQuery<HTMLElement>;
+
+  constructor(
+    toastOrder: JQuery<HTMLElement>,
+    toastPlacement: toastPlacement,
+    placementData: placementData,
+    toastStatus: toastStatus,
+    message: string,
+    config: toastConfiguration = toastDefaultConfig
+  ) {
+    if (!message) {
+      console.error(
+        "Expected 1 arguments, but got 0. An argument for 'message' was not provided."
+      );
+      return;
+    }
+    // <div id="" class="go2344853693 icon-hot-toast"></div> success
+    // <div class="go2534082608 icon-hot-toast"></div> error
+
+    const successIcon = `<div id="" class="go2344853693 icon-hot-toast"></div>`;
+    const infoIcon = `<div id="" class="infoIcon icon-hot-toast"></div>`;
+    const errorIcon = `<div class="go2534082608 icon-hot-toast"></div>`;
+    const warningIcon = `<svg class="icon-hot-toast"  width="25px" height="25px" viewBox="-50 -50 300 300">
   <polygon class="triangle warning-sign hot-toast-path-sign" stroke-linejoin="round" points="100,0 0,200 200,200"/>
   <path class="exclamation" xmlns="http://www.w3.org/2000/svg" d="M49.9,78c-4.2,0-7.6,3.5-7.6,7.8v1.5c0,4.3,3.4,7.7,7.6,7.7c4.2,0,7.7-3.4,7.7-7.7v-1.5C57.6,81.5,54.2,78,49.9,78L49.9,78z   M49.8,5c-6.3,0-11.9,6.1-11.3,12.4l3.8,47c0.2,3.7,3.1,6.9,6.9,7.2c4.3,0.3,8.1-3,8.4-7.2l3.9-47C62,11.1,56.6,5,49.8,5z"/>
 </svg>
  `;
 
-  const loading = `<div class="go1858758034"></div>`;
+    const loading = `<div class="go1858758034"></div>`;
 
-  const generateIconParent = (mainIcon?: string) =>
-    `<div class="go685806154"><div class="go1579819456">${mainIcon}</div></div>`;
+    const generateIconParent = (mainIcon?: string) =>
+      `<div class="go685806154"><div class="go1579819456">${mainIcon}</div></div>`;
 
-  var statusClass;
-  var icon;
-  var iconElement;
+    var statusClass;
+    var icon;
+    var iconElement;
 
-  switch (toastStatus) {
-    case 'success':
-      statusClass = 'success-toast';
-      icon = successIcon;
-      break;
+    switch (toastStatus) {
+      case 'success':
+        statusClass = 'success-toast';
+        icon = successIcon;
+        break;
 
-    case 'error':
-      statusClass = 'error-toast';
-      icon = errorIcon;
-      break;
+      case 'error':
+        statusClass = 'error-toast';
+        icon = errorIcon;
+        break;
 
-    case 'info':
-      statusClass = 'info-toast';
-      icon = infoIcon;
-      break;
+      case 'info':
+        statusClass = 'info-toast';
+        icon = infoIcon;
+        break;
 
-    case 'loading':
-      statusClass = 'loading-toast';
-      icon = loading;
-      break;
+      case 'loading':
+        statusClass = 'loading-toast';
+        icon = loading;
+        break;
 
-    case 'warning':
-      statusClass = 'warning-toast';
-      icon = warningIcon;
-      break;
+      case 'warning':
+        statusClass = 'warning-toast';
+        icon = warningIcon;
+        break;
 
-    default:
-      icon = '';
-      statusClass = '';
-      break;
-  }
-
-  if (!config.duration) {
-    config.duration = defaultDuration;
-  }
-
-  if (config.icon) {
-    icon = config.icon;
-  }
-
-  if (icon) {
-    if (config.icon) {
-      iconElement = $(`<span>${icon}</span>`);
-      IconCustomStyle(iconElement, config.iconTheme);
-      var a = iconElement.html();
-
-      iconElement = a;
-    } else {
-      iconElement = $(icon);
-      IconCustomStyle(
-        iconElement,
-        config.iconTheme,
-        toastStatus == 'warning' ? true : false
-      );
-
-      var a = $('<div></div>').append(iconElement).html();
-      iconElement = generateIconParent(a);
+      default:
+        icon = '';
+        statusClass = '';
+        break;
     }
-  }
 
-  const xSign = $(
-    `<div class="hot-toast-close">
+    if (!config.duration) {
+      config.duration = defaultDuration;
+    }
+
+    if (config.icon) {
+      icon = config.icon;
+    }
+
+    if (icon) {
+      if (config.icon) {
+        iconElement = $(`<span>${icon}</span>`);
+        IconCustomStyle(iconElement, config.iconTheme);
+        var a = iconElement.html();
+
+        iconElement = a;
+      } else {
+        iconElement = $(icon);
+        IconCustomStyle(
+          iconElement,
+          config.iconTheme,
+          toastStatus == 'warning' ? true : false
+        );
+
+        var a = $('<div></div>').append(iconElement).html();
+        iconElement = generateIconParent(a);
+      }
+    }
+
+    const xSign = $(
+      `<div class="hot-toast-close">
     <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
         <path fill="currentColor" d="M.439,21.44a1.5,1.5,0,0,0,2.122,2.121L11.823,14.3a.25.25,0,0,1,.354,0l9.262,9.263a1.5,1.5,0,1,0,2.122-2.121L14.3,12.177a.25.25,0,0,1,0-.354l9.263-9.262A1.5,1.5,0,0,0,21.439.44L12.177,9.7a.25.25,0,0,1-.354,0L2.561.44A1.5,1.5,0,0,0,.439,2.561L9.7,11.823a.25.25,0,0,1,0,.354Z">
         </path>
     </svg>
     </div>`
-  );
-  IconCustomStyle(xSign, config.iconTheme, true);
+    );
+    IconCustomStyle(xSign, config.iconTheme, true);
 
-  const contentParentStr = `
+    const contentParentStr = `
     <div class="toast-content-parent "> 
     </div>
     `;
 
-  const toastElement = $(`<div class="toast showing"> </div>`);
-  let contentParent = $(contentParentStr);
-  let content = $('<div class="toast-cotent"></div>');
+    const toastElement = $(`<div class="toast showing"> </div>`);
+    let contentParent = $(contentParentStr);
+    let content = $('<div class="toast-cotent"></div>');
 
-  customStyle(contentParent, config.style);
-  if (icon) {
-    content.append($(`<div class="toast-icon">${iconElement}</div>`));
+    customStyle(contentParent, config.style);
+    if (icon) {
+      content.append($(`<div class="toast-icon">${iconElement}</div>`));
+    }
+
+    content.append($(` <span class="toast-message">${message}</span>`));
+    contentParent.append(content);
+
+    if (config.dismissible) {
+      contentParent.append(xSign);
+
+      xSign.on('click', () => {
+        this.close();
+      });
+    }
+
+    toastElement.append(contentParent);
+
+    if (placementData == 'stacks') {
+      $(`#toast-order_placement_${toastPlacement}`).append(contentParent);
+    } else {
+      toastOrder.append(toastElement);
+    }
+
+    this.toastElement = toastElement;
   }
 
-  content.append($(` <span class="toast-message">${message}</span>`));
-  contentParent.append(content);
-  contentParent.append(xSign);
+  close() {
+    this.toastElement.removeClass('showing');
+    this.toastElement.addClass('hiding');
 
-  toastElement.append(contentParent);
-
-  if (placementData == 'stacks') {
-    $(`#toast-order_placement_${toastPlacement}`).append(contentParent);
-  } else {
-    toastOrder.append(toastElement);
+    setTimeout(() => {
+      this.toastElement.remove();
+    }, 220);
   }
-
-  return toastElement;
 }
+
 export function customStyle(
   content: JQuery<HTMLElement>,
   style: ToastConfigStyle
