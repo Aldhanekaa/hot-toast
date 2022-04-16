@@ -1,6 +1,6 @@
 name: Main
 
-oot on:
+on:
   push:
     tags:
       - 'v*.*.*'
